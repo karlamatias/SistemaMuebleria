@@ -24,6 +24,7 @@ public class Validar extends HttpServlet {
 
     Usuarios usuario = new Usuarios();
     UsuariosBD usuarioBD = new UsuariosBD();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,19 +36,35 @@ public class Validar extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Validar</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Validar at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        String accion = request.getParameter("accion");
+
+        if (accion.equalsIgnoreCase("Ingresar")) {
+            String documento = request.getParameter("txtusuario");
+            String pass = request.getParameter("txtpassword");
+            usuario = usuarioBD.Validar(documento, pass);
+
+            //si existe el usuario en la base de datos, debera ingresar
+            if (usuario.getUsuario() != null) {
+
+                request.setAttribute("usuario", usuario);
+
+                //ahora vamos a loggear con el area, esto significa, que si alguien no es de esta area no podra ingresar
+                if (usuario.getArea().equals("Financiera")) {
+                    request.getRequestDispatcher("Controlador?menu=Financiera").forward(request, response);
+                }
+                if (usuario.getArea().equals("Fabrica")) {
+                    request.getRequestDispatcher("Controlador?menu=Principal").forward(request, response);
+                }
+                if (usuario.getArea().equals("Ventas")) {
+                    request.getRequestDispatcher("Controlador?menu=Ventas").forward(request, response);
+                }
+            }
+
+        } else {
+            request.getRequestDispatcher("index.jsp").forward(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -76,28 +93,10 @@ public class Validar extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        String accion = request.getParameter("accion");
-       
-        
-        if (accion.equalsIgnoreCase("Ingresar")) {
-            String documento = request.getParameter("txtusuario");
-            String pass = request.getParameter("txtpassword");
-            usuario = usuarioBD.Validar(documento, pass);
-            
-            if(usuario.getUsuario()!= null){
-           
-                request.setAttribute("usuario", usuario);
-                request.getRequestDispatcher("Controlador?accion=Principal").forward(request, response);
-                
+        processRequest(request, response);
 
-            }else{
-                request.getRequestDispatcher("index.jsp").forward(request, response);
-            }
-        
-        
     }
-    }
+
     /**
      * Returns a short description of the servlet.
      *

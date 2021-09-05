@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,9 +18,12 @@ import java.util.logging.Logger;
  */
 public class Conexion {
     Connection con;
-    String url="jdbc:mysql://localhost:3306/Muebleria";
-    String usuario = "root";
-    String clave = "12345";
+    String url="jdbc:mysql://localhost:3306/Muebleria?useSSL=false";
+    String usuario = "MiMuebleria";
+    String clave = "MM123";
+    
+    
+        
     
        public Connection Conectar(){
        
@@ -32,6 +36,6 @@ public class Conexion {
             Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
         }
         return con;
-    }
-
+       
+       }  
 }
